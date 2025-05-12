@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+requests
+plotly
+pyvis
+gseapy
+scikit-learn
+umap-learn
+networkx
+seaborn
+beautifulsoup4
