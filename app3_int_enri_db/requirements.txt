@@ -1,6 +1,0 @@
-streamlit
-pandas
-networkx
-gseapy
-pyvis
-beautifulsoup4

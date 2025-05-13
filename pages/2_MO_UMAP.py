@@ -42,7 +42,8 @@ use_example = st.checkbox("Use Example Data- Cardiomyopathy")
 genomics = transcriptomics = proteomics = None
 
 if use_example:
-    input_dir = os.path.join(os.path.dirname(__file__), 'Input')
+    input_dir = os.path.join(os.path.dirname(__file__), '..', 'Input')
+    input_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'Input'))
     genomics_path = os.path.join(input_dir, "cvd_genomics.csv")
     transcriptomics_path = os.path.join(input_dir, "cvd_transcriptomics.csv")
     proteomics_path = os.path.join(input_dir, "cvd_proteomics.csv")
@@ -50,7 +51,7 @@ if use_example:
         genomics = open(genomics_path, "rb")
         transcriptomics = open(transcriptomics_path, "rb")
         proteomics = open(proteomics_path, "rb")
-        st.success("Loaded example files from 'Input/' directory.")
+        st.success("Loaded example files")
     except FileNotFoundError:
         st.error("Example files not found. Please check the 'Input' folder and filenames.")
 else:

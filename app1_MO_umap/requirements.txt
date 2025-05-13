@@ -1,9 +1,0 @@
-streamlit
-pandas
-numpy
-requests
-plotly
-pyvis
-gseapy
-scikit-learn
-umap-learn

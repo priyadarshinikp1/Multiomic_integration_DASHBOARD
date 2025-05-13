@@ -21,7 +21,8 @@ use_example = st.checkbox("Use Example Data- Cardiomyopathy")
 genomics = transcriptomics = proteomics = None
 
 if use_example:
-    input_dir = os.path.join(os.path.dirname(__file__), 'Input')
+    input_dir = os.path.join(os.path.dirname(__file__), '..', 'Input')
+    input_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'Input'))
     genomics_path = os.path.join(input_dir, "cvd_genomics.csv")
     transcriptomics_path = os.path.join(input_dir, "cvd_transcriptomics.csv")
     proteomics_path = os.path.join(input_dir, "cvd_proteomics.csv")

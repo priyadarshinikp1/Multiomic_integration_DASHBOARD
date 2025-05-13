@@ -37,7 +37,8 @@ use_example = st.checkbox("Use Example Data- Cardiomyopathy")
 genomics = transcriptomics = proteomics = None
 
 if use_example:
-    input_dir = os.path.join(os.path.dirname(__file__), 'Input')
+    input_dir = os.path.join(os.path.dirname(__file__), '..', 'Input')
+    input_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'Input'))
     genomics_path = os.path.join(input_dir, "cvd_genomics.csv")
     transcriptomics_path = os.path.join(input_dir, "cvd_transcriptomics.csv")
     proteomics_path = os.path.join(input_dir, "cvd_proteomics.csv")
@@ -125,7 +126,6 @@ if genomics and transcriptomics and proteomics:
         tdf_filtered = tdf[(tdf['p_value'] <= t_pval_thresh) & (tdf['logFC'].abs() >= logfc_thresh)]
         pdf_filtered = pdf[pdf['Intensity'] >= p_intensity_thresh]
 
-        union_genes = set(gdf_filtered['Gene']) | set(tdf_filtered['Gene'])
 
         def extract_uniprot_ids(protein_series):
             ids = set()
@@ -167,13 +167,18 @@ if genomics and transcriptomics and proteomics:
         expanded_protein_df = pd.DataFrame(expanded_rows)
         protein_gene_map = dict(zip(expanded_protein_df['Protein'], expanded_protein_df['GeneName']))
 
-        all_entities = union_genes | set(protein_gene_map.values())
+    
 
         results = {}
         raw_assoc_data = []
 
         if run_enrichment:
             st.header("📊 Enrichment Analyses")
+            merged_df = pd.merge(gdf_filtered, tdf_filtered, on='Gene', how='inner')
+            merged_df = pd.merge(merged_df, pdf_filtered, on='Gene', how='inner')
+            common_genes = merged_df['Gene'].dropna().unique().tolist()
+            gene_list_clean = [str(g).strip() for g in common_genes]
+
             libraries = {
                 "Reactome Pathways": "Reactome_2016",
                 "Disease Associations": "DisGeNET",
@@ -182,7 +187,6 @@ if genomics and transcriptomics and proteomics:
 
             for name, lib in libraries.items():
                 try:
-                    gene_list_clean = [str(g).strip() for g in union_genes if pd.notna(g)]
                     enr = enrichr(gene_list=gene_list_clean, gene_sets=lib, outdir=None)
 
                     if enr.results.empty:
@@ -267,8 +271,6 @@ if genomics and transcriptomics and proteomics:
 st.header("🧬 UMAP + KMeans Clustering (Multi-Omics)")
 
 try:
-    merged_df = pd.merge(gdf_filtered, tdf_filtered, on='Gene', how='inner')
-    merged_df = pd.merge(merged_df, pdf_filtered, on='Gene', how='inner')
 
     genomics_data = merged_df[['CADD']].values
     transcriptomics_data = merged_df[['logFC']].values
